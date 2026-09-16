@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Copyright (c) 2006 - 2017 Bruker BioSpin MRI GmbH. All Rights Reserved.
+$Id$
+Description: Layout of routine parameter editor for method gre.
+-->
+<cardStack
+    xmlns="http://www.bruker.de/mri/generated/xsd/card"
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    <parameterCard displayName="Sequence">
+        <column>
+            <parameter name="NEchoes"/>
+            <parameter name="PVM_EchoTime"/>
+            <parameter name="PVM_ScanTimeStr"/>
+            <textLine text=""/>
+            <textLine text="Excitation Pulse Details">
+                <parameterCard displayName="Excitation Pulse Details">
+                    <column>
+                        <parameter name="ExcPulse1"/>
+                    </column>
+                </parameterCard>
+            </textLine>
+             <textLine text="Refocusing Pulse Details">
+                <parameterCard displayName="Refocusing Pulse Details">
+                    <column>
+                        <parameter name="RefPulse1"/>
+                    </column>
+                </parameterCard>
+            </textLine>
+        </column>
+        <column>
+           <parameter name="PVM_SliceThick"/>
+           <parameter name="NPts"/>
+           <parameter name="PVM_Fov"/>
+           <parameter name="NDummyScans"/>
+        </column>
+    </parameterCard>
+    <parameterCard displayName="Setup">
+        <parameterCard displayName="Main">
+            <column>
+                <parameter name="PVM_RefPowMod1"/>
+                <parameter name="PVM_RefPowCh1"/>
+                <parameter name="PVM_RefPowStat1"/>
+                <parameter name="PVM_DeriveGains" displayName="Calc. Pulse Ampl."/>
+                <parameter name="PVM_RgJob"/>
+                <parameter name="PVM_RgValue" widget="slider"/>
+            </column>
+            <column>
+                <textLine text=""/>
+            </column>
+        </parameterCard>
+        <xi:include href="file:///XML_INCLUDE_DIR/Shim.xml"/>
+    </parameterCard>
+    <parameterCard displayName="System">
+        <xi:include href="file:///XML_INCLUDE_DIR/CoilSelection.xml"/>
+    </parameterCard>
+</cardStack>

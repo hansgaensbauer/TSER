@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Copyright (c) 2006 - 2017 Bruker BioSpin MRI GmbH. All Rights Reserved.
+$Id$
+Description: Layout of routine parameter editor for method gre.
+-->
+<cardStack
+    xmlns="http://www.bruker.de/mri/generated/xsd/card"
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+    <parameterCard displayName="Sequence">
+        <column>
+            <parameter name="NEchoes"/>
+            <parameter name="PVM_EchoTime"/>
+            <parameter name="RecoveryTime"/>
+            <parameter name="PVM_RepetitionTime"/>
+            <parameter name="PVM_ScanTimeStr"/>
+            <parameter name="NDummyScans"/>
+            <textLine text=""/>
+            <textLine text="Excitation Pulse Details">
+                <parameterCard displayName="Excitation Pulse Details">
+                    <column>
+                        <parameter name="ExcPulse1"/>
+                    </column>
+                </parameterCard>
+            </textLine>
+             <textLine text="Refocusing Pulse Details">
+                <parameterCard displayName="Refocusing Pulse Details">
+                    <column>
+                        <parameter name="RefPulse1"/>
+                    </column>
+                </parameterCard>
+            </textLine>
+        </column>
+    </parameterCard>
+    <parameterCard displayName="Geometry">
+        <parameterCard displayName="Main">
+            <column>
+                <parameter name="PVM_Fov"/>
+                <parameter name="NPts"/>
+                <parameter name="PVM_SliceThick"/>
+                <parameter name="PVM_ObjOrderScheme"/>
+                <parameter name="PVM_MajSliceOri"/>
+            </column>
+            <column>
+                <arrayGroup displayName="Slice Package" sizeParameterName="PVM_NSPacks" indexCouplingKey="BRUKER_SLICEPACKAGE">
+                    <parameter name="PVM_SPackArrNSlices"/>
+                    <parameter name="PVM_SPackArrSliceOrient"/>
+                    <parameter name="PVM_SPackArrReadOrient"/>
+                    <parameter name="PVM_SPackArrReadOffset"/>
+                    <parameter name="PVM_SPackArrPhase1Offset"/>
+                    <parameter name="PVM_SPackArrSliceOffset"/>
+                    <parameter name="PVM_SPackArrSliceGapMode"/>
+                    <parameter name="PVM_SPackArrSliceGap"/>
+                    <parameter name="PVM_SPackArrSliceDistance"/>
+                </arrayGroup>
+            </column>
+        </parameterCard>
+    </parameterCard>
+   <parameterCard displayName="Setup">
+        <parameterCard displayName="Main">
+            <column>
+                <parameter name="PVM_RefPowMod1"/>
+                <parameter name="PVM_RefPowCh1"/>
+                <parameter name="PVM_RefPowStat1"/>
+                <parameter name="PVM_DeriveGains" displayName="Calc. Pulse Ampl."/>
+                <parameter name="PVM_RgJob"/>
+                <parameter name="PVM_RgValue" widget="slider"/>
+            </column>
+            <column>
+                <textLine text=""/>
+            </column>
+        </parameterCard>
+        <xi:include href="file:///XML_INCLUDE_DIR/Shim.xml"/>
+    </parameterCard>
+    <parameterCard displayName="System">
+        <xi:include href="file:///XML_INCLUDE_DIR/CoilSelection.xml"/>
+    </parameterCard>
+</cardStack>

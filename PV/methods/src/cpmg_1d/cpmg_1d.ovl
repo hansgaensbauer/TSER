@@ -1,0 +1,70 @@
+/* ***************************************************************
+ *
+ * $Source$
+ *
+ * Copyright (c) 1999-2015
+ * Bruker BioSpin MRI GmbH
+ * D-76275 Ettlingen, Germany
+ *
+ * All Rights Reserved
+ *
+ * $Id$
+ *
+ * ***************************************************************/
+
+/****************************************************************/
+/*	TYPE DEFINITIONS					*/
+/****************************************************************/
+
+method cpmg_1d modality MR
+{
+
+#include "mr/recotyp.h" 
+#include "subject/subjtyp.h" 
+#include "mr/ta_config.h" 
+#include "mr/PvTypes/mrTypes.h"
+
+
+/****************************************************************/
+/*	PARAMETER DEFINITIONS					*/
+/****************************************************************/
+
+
+/*--------------------------------------------------------------*
+ * Include references to common parameters
+ *--------------------------------------------------------------*/
+#include "proto/cmn_baselevel_extern.def"
+#include "proto/cmn_subject_extern.def"
+#include "proto/cmn_pvm_extern.def"
+
+/*--------------------------------------------------------------*
+ * Include references to MR specific parameters
+ *--------------------------------------------------------------*/
+#include "proto/mr_baselevel_extern.def"
+#include "proto/mr_pvm_extern.def"
+
+/*--------------------------------------------------------------*
+ * Include definitions of method parameters
+ *--------------------------------------------------------------*/
+
+#include "mr/PvTypes/method.fmt"
+#include "parsTypes.h"
+#include "parsDefinition.h"
+
+/****************************************************************/
+/*	RE-DEFINITION OF RELATIONS				*/
+/****************************************************************/
+
+#include "callbackDefs.h"
+
+/****************************************************************/
+/*	PARAMETER CLASSES					*/
+/****************************************************************/
+#include "mr/PvGroups/method.grp"
+#include "mr/PvGroups/modules.grp"
+#include "parsLayout.h"
+
+};
+/****************************************************************/
+/*	E N D   O F   F I L E					*/
+/****************************************************************/
