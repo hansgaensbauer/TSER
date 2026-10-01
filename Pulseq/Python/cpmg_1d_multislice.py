@@ -37,7 +37,7 @@ rf = pp.make_sinc_pulse(
     time_bw_product=time_bw_product,
     system=system,
     return_gz=False,
-    delay=system.rf_dead_time
+    delay=max(grad_rise_time, system.rf_dead_time)
 )
 
 bandwidth = time_bw_product / exc_pulse_duration   # Hz
