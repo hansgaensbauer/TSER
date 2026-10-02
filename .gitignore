@@ -145,3 +145,10 @@ Pulseq/Recon/Data/
 
 # Sequences
 *.seq
+
+#Pulseq default sequences
+write_gre.py
+write_tse.py
+
+#Sequence source backups
+*.bak 

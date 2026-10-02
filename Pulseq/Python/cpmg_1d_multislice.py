@@ -1,27 +1,28 @@
 import numpy as np
 import pypulseq as pp
-
-# from Pulseq.Python.plot_loop import plot_loop
-
-#wells running along z, slice select in x, readout in z
+import uuid
+import shutil
+from pathlib import Path
 
 slice_thickness = 4e-3
 n_slices = 8
-num_pts = 32
-fov = 50e-3
+num_pts = 64
+fov = 108e-3
 delta_k = 1/fov
+recovery_time = 500e-3
+slice_gap = 9e-3
 t_echo = 10e-3
-num_echoes = 3
-exc_pulse_duration = 2.5e-3
+num_echoes = 4
+exc_pulse_duration = 3e-3
 refoc_pulse_duration = 2e-3
 grad_rise_time = 110e-6
 
 system = pp.Opts(
-    max_grad=32,
+    max_grad=28,
     grad_unit='mT/m',
-    max_slew=130,
+    max_slew=150,
     slew_unit='T/m/s',
-    rf_ringdown_time=30e-6,
+    rf_ringdown_time=20e-6,
     rf_dead_time=100e-6,
     adc_dead_time=10e-6
 )
@@ -37,14 +38,16 @@ rf = pp.make_sinc_pulse(
     time_bw_product=time_bw_product,
     system=system,
     return_gz=False,
-    delay=max(grad_rise_time, system.rf_dead_time)
+    delay=max(grad_rise_time, system.rf_dead_time),
+    use='excitation'
 )
 
 bandwidth = time_bw_product / exc_pulse_duration   # Hz
 amplitude = bandwidth / slice_thickness     # Hz/m (pulseq internal units)
+print(amplitude)
 
 gx = pp.make_trapezoid(
-    channel='x',
+    channel='y',
     amplitude=amplitude,
     rise_time=grad_rise_time,
     flat_time=exc_pulse_duration,
@@ -55,7 +58,7 @@ gz_dur = t_echo - refoc_pulse_duration - 2*system.rf_dead_time
 reph_grad_duration = (t_echo-exc_pulse_duration-refoc_pulse_duration)/2-grad_rise_time-system.rf_dead_time
 gz = pp.make_trapezoid(channel='z', area=num_pts*delta_k, duration=gz_dur, rise_time=grad_rise_time, system=system)
 gz_prewind = pp.make_trapezoid(channel='z', area=gz.area / 2, duration=reph_grad_duration,rise_time=grad_rise_time, system=system)
-gx_reph = pp.make_trapezoid(channel='x', area=-gx.area / 2, duration=reph_grad_duration,rise_time=grad_rise_time, system=system)
+gx_reph = pp.make_trapezoid(channel='y', area=-gx.area / 2, duration=reph_grad_duration,rise_time=grad_rise_time, system=system)
 
 rf180 = pp.make_block_pulse(
     flip_angle=np.pi,
@@ -78,16 +81,44 @@ adc = pp.make_adc(
     system=system
 )
 
-seq.add_block(rf, gx)
-seq.add_block(gx_reph, gz_prewind)
+for s in range(n_slices):
+    print(slice_gap*(s-(n_slices-1)/2))
+    rf.freqOffset=gx.amplitude*slice_gap*(s-(n_slices-1)/2)
+    print(rf.freqOffset)
+    rf180.phase_offset = np.pi/2
+    seq.add_block(rf, gx)
+    seq.add_block(gx_reph, gz_prewind)
 
-for i in range(num_echoes):
-    seq.add_block(rf180)
-    seq.add_block(pp.make_delay(system.rf_dead_time - system.rf_ringdown_time))
-    seq.add_block(gz, adc)
+    for i in range(num_echoes):
+        seq.add_block(rf180)
+        seq.add_block(pp.make_delay(system.rf_dead_time - system.rf_ringdown_time))
+        seq.add_block(gz, adc)
+
+    
+    seq.add_block(pp.make_delay(recovery_time))
+    rf180.phase_offset = -np.pi/2
+
+    seq.add_block(rf, gx)
+    seq.add_block(gx_reph, gz_prewind)
+
+    for i in range(num_echoes):
+        seq.add_block(rf180)
+        seq.add_block(pp.make_delay(system.rf_dead_time - system.rf_ringdown_time))
+        seq.add_block(gz, adc)
+
+    if(s < n_slices - 1):
+        seq.add_block(pp.make_delay(recovery_time))
+
+seq.set_definition(key='FOV', value=[fov, 20e-3, 150e-3])
+seq.set_definition(key='Name', value='cpmg_multislice')
 
 seq.check_timing()
-# seq.write('cpmg_1d.seq')
+# seq_uuid = str(uuid.uuid4())[-8:]
+# print(seq_uuid)
+# seq.write(f'Sequences/{n_slices}s_{slice_thickness*1000}mm_{num_echoes}e_{t_echo*1000}te_{seq_uuid}'+'.seq')
+# src = Path(__file__).resolve()
+# dst = Path(f"Sequences/Source/{seq_uuid}.py.bak")
+# shutil.copy2(src, dst)
 
 # plot_loop(seq, 5,7, "$N_e$", save=True)
 seq.plot()

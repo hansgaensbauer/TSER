@@ -5,9 +5,9 @@ import pypulseq as pp
 
 #wells running along z, slice select in x, readout in z
 
-slice_thickness = 4e-3
+slice_thickness = 3e-3
 n_slices = 1
-slice_gap         = 9e-3
+slice_gap = 9e-3
 num_pts = 32
 fov = 50e-3
 recovery_time = 5
