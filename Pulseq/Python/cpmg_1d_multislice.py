@@ -5,14 +5,14 @@ import shutil
 from pathlib import Path
 
 slice_thickness = 4e-3
-n_slices = 8
+n_slices = 5
 num_pts = 64
 fov = 108e-3
 delta_k = 1/fov
 recovery_time = 500e-3
 slice_gap = 9e-3
 t_echo = 10e-3
-num_echoes = 4
+num_echoes = 10
 exc_pulse_duration = 3e-3
 refoc_pulse_duration = 2e-3
 grad_rise_time = 110e-6
@@ -47,7 +47,7 @@ amplitude = bandwidth / slice_thickness     # Hz/m (pulseq internal units)
 print(amplitude)
 
 gx = pp.make_trapezoid(
-    channel='y',
+    channel='x',
     amplitude=amplitude,
     rise_time=grad_rise_time,
     flat_time=exc_pulse_duration,
@@ -58,7 +58,7 @@ gz_dur = t_echo - refoc_pulse_duration - 2*system.rf_dead_time
 reph_grad_duration = (t_echo-exc_pulse_duration-refoc_pulse_duration)/2-grad_rise_time-system.rf_dead_time
 gz = pp.make_trapezoid(channel='z', area=num_pts*delta_k, duration=gz_dur, rise_time=grad_rise_time, system=system)
 gz_prewind = pp.make_trapezoid(channel='z', area=gz.area / 2, duration=reph_grad_duration,rise_time=grad_rise_time, system=system)
-gx_reph = pp.make_trapezoid(channel='y', area=-gx.area / 2, duration=reph_grad_duration,rise_time=grad_rise_time, system=system)
+gx_reph = pp.make_trapezoid(channel='x', area=-gx.area / 2, duration=reph_grad_duration,rise_time=grad_rise_time, system=system)
 
 rf180 = pp.make_block_pulse(
     flip_angle=np.pi,
@@ -82,9 +82,7 @@ adc = pp.make_adc(
 )
 
 for s in range(n_slices):
-    print(slice_gap*(s-(n_slices-1)/2))
-    rf.freqOffset=gx.amplitude*slice_gap*(s-(n_slices-1)/2)
-    print(rf.freqOffset)
+    rf.freq_offset = gx.amplitude*slice_gap*(s-(n_slices-1)/2)
     rf180.phase_offset = np.pi/2
     seq.add_block(rf, gx)
     seq.add_block(gx_reph, gz_prewind)
@@ -113,12 +111,12 @@ seq.set_definition(key='FOV', value=[fov, 20e-3, 150e-3])
 seq.set_definition(key='Name', value='cpmg_multislice')
 
 seq.check_timing()
-# seq_uuid = str(uuid.uuid4())[-8:]
-# print(seq_uuid)
-# seq.write(f'Sequences/{n_slices}s_{slice_thickness*1000}mm_{num_echoes}e_{t_echo*1000}te_{seq_uuid}'+'.seq')
-# src = Path(__file__).resolve()
-# dst = Path(f"Sequences/Source/{seq_uuid}.py.bak")
-# shutil.copy2(src, dst)
+seq_uuid = str(uuid.uuid4())[-8:]
+print(seq_uuid)
+seq.write(f'Sequences/{n_slices}s_{slice_thickness*1000}mm_{num_echoes}e_{t_echo*1000}te_{seq_uuid}'+'.seq')
+src = Path(__file__).resolve()
+dst = Path(f"Sequences/Source/{seq_uuid}.py.bak")
+shutil.copy2(src, dst)
 
 # plot_loop(seq, 5,7, "$N_e$", save=True)
 seq.plot()
