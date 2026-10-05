@@ -5,7 +5,7 @@ import shutil
 from pathlib import Path
 
 slice_thickness = 4e-3
-n_slices = 5
+n_slices = 8
 num_pts = 64
 fov = 108e-3
 delta_k = 1/fov
@@ -113,9 +113,9 @@ seq.set_definition(key='Name', value='cpmg_multislice')
 seq.check_timing()
 seq_uuid = str(uuid.uuid4())[-8:]
 print(seq_uuid)
-seq.write(f'Sequences/{n_slices}s_{slice_thickness*1000}mm_{num_echoes}e_{t_echo*1000}te_{seq_uuid}'+'.seq')
+seq.write(f'Pulseq\\Python\\Sequences/{n_slices}s_{slice_thickness*1000}mm_{num_echoes}e_{t_echo*1000}te_{seq_uuid}'+'.seq')
 src = Path(__file__).resolve()
-dst = Path(f"Sequences/Source/{seq_uuid}.py.bak")
+dst = Path(f"Pulseq\\Python\\Sequences\\Source\\{seq_uuid}.py.bak")
 shutil.copy2(src, dst)
 
 # plot_loop(seq, 5,7, "$N_e$", save=True)
