@@ -104,8 +104,7 @@ for s in range(n_slices):
         seq.add_block(pp.make_delay(system.rf_dead_time - system.rf_ringdown_time))
         seq.add_block(gz, adc)
 
-    if(s < n_slices - 1):
-        seq.add_block(pp.make_delay(recovery_time))
+    seq.add_block(pp.make_delay(recovery_time))
 
 seq.set_definition(key='FOV', value=[fov, 20e-3, 150e-3])
 seq.set_definition(key='Name', value='cpmg_multislice')
