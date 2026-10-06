@@ -5,10 +5,10 @@ import shutil
 from pathlib import Path
 
 slice_thickness = 4e-3
-n_slices = 8
+n_slices = 4
 num_pts = 128
 fov = 108e-3
-slice_gap = 9e-3
+slice_spacing = 9e-3
 t_echo = 10e-3
 num_echoes = 10
 recovery_time = 5
@@ -82,7 +82,8 @@ adc = pp.make_adc(
 )
 
 for s in range(n_slices):
-    rf.freq_offset = g_ss.amplitude*slice_gap*(s-(n_slices-1)/2)
+    rf.freq_offset = g_ss.amplitude*slice_spacing*(s-(n_slices-1)/2)
+    print(rf.freq_offset)
     rf180.phase_offset = np.pi/2
     seq.add_block(rf, g_ss)
     seq.add_block(g_ss_reph, g_ro_prewind)
