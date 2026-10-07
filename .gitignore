@@ -152,3 +152,6 @@ write_tse.py
 
 #Sequence source backups
 *.bak 
+
+#Processed data
+#.csv

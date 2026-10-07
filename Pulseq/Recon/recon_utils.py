@@ -84,7 +84,7 @@ def process_to_array(data_sa, te=10e-3, n_wells=12, save=False, filename=None):
                     if(np.isnan(well_t2s[i,j])):
                         f.write('NA,')
                     else:
-                        f.write("%.2f," % well_t2s[i,j])
+                        f.write("%.4f," % well_t2s[i,j])
                 f.seek(f.tell() - 1)
                 f.write('\n')
         # np.savetxt(filename, well_t2s, delimiter=',')

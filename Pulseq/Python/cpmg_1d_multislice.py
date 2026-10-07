@@ -5,12 +5,12 @@ import shutil
 from pathlib import Path
 
 slice_thickness = 4e-3
-n_slices = 4
+n_slices = 8
 num_pts = 128
 fov = 108e-3
 slice_spacing = 9e-3
-t_echo = 10e-3
-num_echoes = 10
+t_echo = 30e-3
+num_echoes = 133
 recovery_time = 5
 
 exc_pulse_duration = 3e-3
@@ -121,4 +121,4 @@ dst = src.parent  / Path(f"Sequences/Source/{seq_uuid}.py.bak")
 shutil.copy2(src, dst)
 
 # plot_loop(seq, 5,7, "$N_e$", save=True)
-seq.plot()
+# seq.plot()
