@@ -88,4 +88,4 @@ def process_to_array(data_sa, te=10e-3, n_wells=12, save=False, filename=None):
                 f.seek(f.tell() - 1)
                 f.write('\n')
         # np.savetxt(filename, well_t2s, delimiter=',')
-    return well_t2s
+    return np.flipud(np.fliplr(well_t2s))
