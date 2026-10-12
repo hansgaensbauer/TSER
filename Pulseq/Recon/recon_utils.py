@@ -55,7 +55,8 @@ def assign_wells(data_sa, slice_peaks, slice_t2s, n_wells):
     n_slices = np.shape(data_sa)[1]
     first_row = find_first_row(slice_peaks)
     points = np.shape(data_sa)[0]
-    points_per_well = points/n_wells
+    # points_per_well = points/n_wells/2
+    points_per_well = 10
 
     #assign to wells
     well_t2s = np.full((n_slices, n_wells), np.nan)
@@ -88,4 +89,4 @@ def process_to_array(data_sa, te=10e-3, n_wells=12, save=False, filename=None):
                 f.seek(f.tell() - 1)
                 f.write('\n')
         # np.savetxt(filename, well_t2s, delimiter=',')
-    return np.flipud(np.fliplr(well_t2s))
+    return well_t2s
