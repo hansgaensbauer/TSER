@@ -1,0 +1,6 @@
+numpy
+matplotlib
+pymapvbvd
+pyqt6
+pypulseq
+scipy
