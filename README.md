@@ -19,6 +19,11 @@ MRI imaging sequences typically do not support the fast echo times required for 
 
 ## ParaVision
 
+### Method Installation
+1. Copy the `cpmg_multislice` folder from `ParaVision/methods/src` to `prog/curdir/<user>/ParaVision/methods/src` on the scanner computer.
+2. To compile within ParaVision, 
+3. To compile in a terminal, run `source Paravision/env.sh`, then `make clean cproto depend install installppg` within the copied `cpmg_multislice` folder.
+
 ### Reconstruction
 1. Make a folder inside the `ParaVision` directory called `Data`.
 2. Inside that folder, create another folder called `Output`.
