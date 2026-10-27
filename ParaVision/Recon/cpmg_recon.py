@@ -14,6 +14,7 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
+    #Fitting Decay
     def fit_t2(y, et):
         # Define decay function
         def decay_fn(TE, a, b):
@@ -35,6 +36,9 @@ if __name__ == "__main__":
     # nwells = 3
     fov=-1
 
+    # -------------------------------------------------------------------------
+    # Data Loading and 1D Processing Code (except for 'localizer')
+    # -------------------------------------------------------------------------
     if args.job != "localizer":
         method_file = args.datafolder + '/' + str(args.expno) + '/method'
         with open(method_file, 'r') as mf:
@@ -66,27 +70,42 @@ if __name__ == "__main__":
 
         raw = np.fromfile(args.datafolder + '/' + str(args.expno) + '/rawdata.job0', dtype=np.int32)
         raw_phased = (raw[0::2] + 1j * raw[1::2]).reshape(2, nslices,nechoes,2,npts)
+            # raw[0::2] selects all even-indexed elements (Real)
+            # raw[1::2] selects all odd-indexed elements (Imaginary)
         data = raw_phased[0] + raw_phased[1]
+
+        # 1D Fourier Transform (k-space --> spatial)
         data_ft = np.fft.fftshift(np.fft.fft(np.fft.fftshift(data, axes=-1), axis=-1), axes=-1)
 
+    # -------------------------------------------------------------------------
+    # 2D Preview Image Processing ('all' & 'localizer')
+    # -------------------------------------------------------------------------
     if(args.job == 'all' or args.job == 'localizer'):
+        # Load
         pvdset = brkraw.load(args.datafolder)
         niiobj1 = pvdset.convert(args.expno, reco_id=1)
         slices = niiobj1[1].dataobj.shape[2]
         index = slices // 2
 
+        # Plot & Save
         fig, ax = plt.subplots(1, 1)
         img = ax.imshow(niiobj1[2].dataobj[:, :, index].T, cmap="gray", origin="lower")
         plt.savefig(args.out + '/localizer.png')
 
+    # -------------------------------------------------------------------------
+    # T_2 Calculation and CSV Export
+    # -------------------------------------------------------------------------
     if(args.job == 'all' or args.job == 't2s'):
         tf = plt.figure()
 
+        # T2 calculation
         t2s = np.empty((nslices, nwells))
         for slice in range(nslices):
             for well in range(nwells):
+                # T2 fitting
                 t2s[slice, well] = fit_t2(np.abs(data_ft[slice,30:,0,well_centerindices[well]]), t[30:])
-        
+
+        # CSV Export
         with open(args.out + '/t2data.csv', 'w+') as f:
             f.write('Slice,')
             for well in range(nwells):
@@ -102,12 +121,18 @@ if __name__ == "__main__":
                 else:
                     f.write(f"{t2s[slice, well]:.4f}" + '\n')
 
+    # -------------------------------------------------------------------------
+    # T_2 decay visualization
+    # -------------------------------------------------------------------------
     if(args.job == 'plotslice'):
         tn, ax = plt.subplots(1,2, figsize=(9,5))
+        # Data
         for well in range(nwells):
             ax[0].plot(t[30:], 
                        (np.abs(data_ft[args.slice,30:,0,well_centerindices[well]])),
                         label=str(well + 1))
+
+        # Plot & Save
         dim = np.linspace(-fov/2, fov/2, npts)
         ax[1].plot(dim, np.abs(data_ft[args.slice,0,0,:]), '.')
         ax[1].plot(dim, np.abs(data_ft[args.slice,0,0,:]))
